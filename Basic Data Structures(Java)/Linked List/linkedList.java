@@ -25,7 +25,8 @@ public class linkedList{
         if(idx<0 || idx>=this.sizeLL)
             throw new Exception("Index out of bounds:-1");
     }
-    public int length(Node node){
+//Questions==============================================================================    
+    public static int length(Node node){
         int count=0;
         while(node!=null){
             count++;
@@ -73,7 +74,7 @@ public class linkedList{
         this.tail=this.head;
         this.head=prev;
       }  
-      public int kthFromLast(int k){
+public int kthFromLast(int k){
         // Assume valid values of k passed means fast==null nhi ho skta kabhi bhi.(fast.next==null)ho skta hai valid hai
         Node slow=this.head;
         Node fast=this.head;
@@ -138,6 +139,92 @@ public static linkedList mergeTwoSortedLists(linkedList l1, linkedList l2) {
     LinkedList secondhalf=mergeSort(h2,t2);
     mid.next=h2; //to join the list again so that we dont lost the original list
     return mergeTwoSortedLists(firsthalf,secondhalf);
+  }
+
+  private void reverseDRHelper(Node right,int floor){
+    if(right==null)
+        return;  
+    reverseDRHelper(right.next,floor+1);
+    if(floor>=length(this.head)/2){
+       int temp=left.data;
+       left.data=right.data;
+       right.data=temp;
+       left=left.next;
+    }
+  }
+  Node left;  //act as member variable so that use in both fn.
+  public void reverseDR() {
+    left=this.head;
+    reverseDRHelper(this.head,0);
+  }
+  
+  private void reversePRHelper(Node node){
+    if(node.next==null){
+        Node temp=this.head;
+        this.head=this.tail;
+        this.tail=temp;
+        return;
+    }
+    reversePRHelper(node.next);
+    Node forw=node.next;
+    forw.next=node;
+  }
+
+  public void reversePR(){
+    reversePRHelper(this.head);
+    this.tail.next=null;
+  }
+
+  public static linkedList addTwoLists2(linkedList one,linkedList two){ //easy one without recursion
+    one.reversePI(); //tail se pehle vala node access nhi kr skte tabhi reverse krke add krenge
+    two.reversePI();
+    linkedList ans=new linkedList();
+    Node c1=one.head;
+    Node c2=two.head;
+    int carry=0;
+    while(c1!=null || c2!=null || carry!=0){
+        int sum=(c1!=null?c1.data:0)+(c2!=null?c2.data:0)+carry;
+        carry=sum/10;
+        int value=sum%10;
+        ans.addFirstNode(value); //taki ans ll ko reverse na karna pde kyunki ans reverse mein aaya hai ll bhi reverse hai na(one ,two).
+        if(c1!=null)
+            c1=c1.next;
+        if(c2!=null)
+            c2=c2.next;    
+    }
+    one.reversePI();
+    two.reversePI();
+    return ans;
+  }
+
+//With recursion IMPORTANT
+  public static int addTwoListsHelper(Node one,int pv1,Node two,int pv2,linkedList ans){
+      if(pv1==0 && pv2==0) //base case you can also write (one==null && two==null)
+        return 0;
+      int sum;
+      if(pv1 > pv2){  //size one list can bda hai two se
+      int oc=addTwoListsHelper(one.next,pv1-1,two,pv2,ans);
+      sum=one.data + oc;
+      }
+      else if(pv1 < pv2){
+        int oc=addTwoListsHelper(one,pv1,two.next,pv2-1,ans);
+        sum=two.data + oc;
+      }
+      else{     //equal hai size and pv=place value tabhi add kro vo bhi vapis aate kyunki carry LSB se MSB tak jaata hai.
+       int oc= addTwoListsHelper(one.next,pv1-1,two.next,pv2-1,ans);
+       sum=one.data + two.data + oc;
+      }
+      int carry=sum/10;
+      ans.addFirstNode(sum%10);
+      return carry;
+  }
+  public static linkedList addTwoLists(linkedList one,linkedList two){
+      linkedList ans=new linkedList();
+      int carry=addTwoListsHelper(one.head,length(one.head),two.head,length(two.head),ans);
+      if(carry>0){ //carry bhi bach sakta hai toh usko add krdia kyunki recursion mein MSB vala carry add nhi ho payega.
+          ans.addFirstNode(carry);
+      }
+      return ans;
   }
 //Display===========================================================================    
     public void display(){
