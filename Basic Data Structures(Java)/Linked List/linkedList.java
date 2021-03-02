@@ -25,22 +25,120 @@ public class linkedList{
         if(idx<0 || idx>=this.sizeLL)
             throw new Exception("Index out of bounds:-1");
     }
-
- public int mid(){
-     Node t1=this.head,int i=0,j=this.sizeLL-1;
-     Node t2=this.tail;
-     while(i<j){
-         t1=t1.next;
-         t2=t2.next;
-         i++;
-         j--;
+    public int length(Node node){
+        int count=0;
+        while(node!=null){
+            count++;
+            node=node.next;
+        }
+        return count;
+    }
+    public void reverseDI(){ 
+        Node node=this.head;
+        int c1=0;
+        int c2=length(node)-1;
+        while(c1<c2){
+            Node t1=getNodeAt(c1);
+            Node t2=getNodeAt(c2);
+            int temp=t1.data;
+            t1.data=t2.data;
+            t2.data=temp;
+            c1++;
+            c2--;
+        }
+    }
+    //by default first half mid,
+    public int mid(){
+        Node prev=this.head;
+        Node forw=this.head;
+        //while(fast!=null && fast.next!=null) //2nd half mid for even
+        while(forw.next!=null && forw.next.next!=null){ //first condition for odd list and second is for even list.
+            forw=forw.next.next; //2 increase
+            prev=prev.next; //1 increase
+        }
+        return prev.data;
      }
-     if(i==j)
-        return t1.data;
-     else
-        return t2.data;   
- }   
+      }
+      
+      public void reversePI(){
+        Node prev=null;
+        Node curr=this.head;
+        Node forw=this.head.next;
+        while(curr!=null){
+            forw=curr.next; //backup 
+            curr.next=prev; //link
+            prev=curr; //moves
+            curr=forw; //moves
+        }
+        this.tail=this.head;
+        this.head=prev;
+      }  
+      public int kthFromLast(int k){
+        // Assume valid values of k passed means fast==null nhi ho skta kabhi bhi.(fast.next==null)ho skta hai valid hai
+        Node slow=this.head;
+        Node fast=this.head;
+        while(k-->0){
+            fast=fast.next;
+        }
+        while(fast.next!=null){
+            slow=slow.next;
+            fast=fast.next;
+        }
+        return slow.data;    
+      }   
+//====================================================================================
+public static linkedList mergeTwoSortedLists(linkedList l1, linkedList l2) {
+    linkedList ans =new linkedList();
+    Node node1=l1.head;
+    Node node2=l2.head;
+    while(node1!=null && node2!=null){
+        if(node1.data < node2.data){
+            ans.addLastNode(node1.data);
+            node1=node1.next;
+        }
+        else{
+            ans.addLastNode(node2.data);
+            node2=node2.next;
+        }    
+    }
+    while(node1!=null){
+        ans.addLastNode(node1.data);
+        node1=node1.next;
+    }
+    while(node2!=null){
+        ans.addLastNode(node2.data);
+        node2=node2.next;
+    }
+    return ans;
+  }
 
+  public static Node mid(Node head){
+      Node slow=head;
+      Node fast=head;
+      while(fast.next!=null && fast.next.next!=null){
+          slow=slow.next;
+          fast=fast.next.next;
+      }
+      return slow;
+  }
+  public static linkedList mergeSort(Node head, Node tail){
+   //origional list must be preserved it doenot change.
+    if(head==tail){
+        linkedList base=new linkedList();
+        base.addLast(head.data);
+        return base;
+    }
+    Node mid=mid(head);
+    Node h1=head;
+    Node t1=mid;
+    Node h2=mid.next;
+    Node t2=tail;
+    mid.next=null; //to break the list
+    LinkedList firsthalf=mergeSort(h1,t1);
+    LinkedList secondhalf=mergeSort(h2,t2);
+    mid.next=h2; //to join the list again so that we dont lost the original list
+    return mergeTwoSortedLists(firsthalf,secondhalf);
+  }
 //Display===========================================================================    
     public void display(){
         Node node=this.head;
