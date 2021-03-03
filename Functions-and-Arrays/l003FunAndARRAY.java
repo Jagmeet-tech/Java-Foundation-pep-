@@ -130,6 +130,40 @@ public class l003FunAndARRAY
             b[a[i]]=i;
         return b;
     }
+    public static void firstIndex(int arr[],int data){ //binary search se krna hai linear se nhi krna.
+        int si=0;
+        int fi=-1;
+        int ei=arr.length-1;
+        while(si<=ei){
+            int mid=(si+ei)/2;
+            if(arr[mid] > data)
+                ei=mid-1;
+            else if(arr[mid]< data) 
+                si=mid+1;
+            else{  //equal ho gya data but uske left mein bhi data ho skta hai first occurence vala.
+                fi=mid;
+                ei=mid-1;
+            }      
+        }
+        System.out.println(arr[fi]);
+    }
+    public static void lastIndex(int arr[],int data){ //binary search se krna hai
+        int si=0;
+        int li=-1;
+        int ei=arr.length-1;
+        while(si<=ei){
+            int mid=(si+ei)/2;
+            if(arr[mid] > data)
+                ei=mid-1;
+            else if(arr[mid]< data) 
+                si=mid+1;
+            else{
+                li=mid;
+                si=mid+1;
+            }      
+        }
+        System.out.println(arr[li]);
+    }    
 
     public static void main(String []args)
     {
