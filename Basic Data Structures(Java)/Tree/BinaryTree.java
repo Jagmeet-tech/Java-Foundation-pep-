@@ -105,4 +105,58 @@ public class BinaryTree{
 		return findData2(root.right,data);	
 	} 
 
+//==============================================================================
+public static boolean nodeToRootPath(Node root,int data,ArrayList<Node> ans){
+    if(root==null)
+		return false;
+	boolean res=root.data==data||nodeToRootPath(root.left,data,ans)||nodeToRootPath(root.right,data,ans); //line for finding data ki agr root pe nhi hai toh left pe kro check or right pe kro chck (T||F||F).
+	if(res)
+		ans.add(root);
+	return res;		
+  }
+ public static void printAtDepthK(Node root,Node block,int k,ArrayList<Integer> ans){
+	//preorder tarverse krna hai tabhi Root-Left-Right Question mein given hai. 
+	if(root==null || root==block || k<0){
+		 return;
+	 }
+	 if(k==0){
+		 ans.add(root.data);
+		 return;
+	 }
+	 printAtDepthK(root.left,block,k-1,ans);
+	 printAtDepthK(root.right,block,k-1,ans);
+ } 
+ public static ArrayList<Integer> printKNodesFar(Node node, Node target, int k) {
+	ArrayList<Node> path=new ArrayList<>();
+	nodeToRootPath(node,target.data,path);
+	ArrayList<Integer> ans =new ArrayList<>();
+	Node block=null;
+	for(int i=0;i<path.size();i++){
+		printAtDepthK(path.get(i),block,k-i,ans);
+		block=path.get(i);
+	}
+	return ans;
+  }
+
+ public static void printSingleChildNodes(Node node, Node parent){
+    if(node==null)
+		return;
+	if(parent!=null && (parent.left==null || parent.right==null)){
+		System.out.println(node.data);
+		return;
+	}
+	printSingleChildNodes(node.left,node);
+	printSingleChildNodes(node.right,node);
+  }
+  public static Node removeLeaves(Node root){
+    if(root==null){
+		return null;
+	}
+	if(root.left==null && root.right==null){
+		return null;
+	}
+	root.left=removeLeaves(root.left);
+	root.right=removeLeaves(root.right);
+	return root;
+  } 
 }
