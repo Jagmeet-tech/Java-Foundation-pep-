@@ -1,5 +1,5 @@
 public class BinarySearchTree{
-    public static Node{
+    public static class Node{
         int data;
         BinarySearchTree left;
         BinarySearchTree right;
