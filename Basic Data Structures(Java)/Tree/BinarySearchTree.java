@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class BinarySearchTree{
     public static class Node{
         int data;
@@ -129,5 +130,47 @@ public class BinarySearchTree{
         if(node.data >= d1 && node.data <= d2 )
             System.out.println(node.data);
         pir(node.right,d1,d2);        
+    }
+
+
+    public static Node removeNode(Node root ,int data){
+        if(root==null)
+            return null;
+        if(data > root.data)
+            root.right=removeNode(root.right,data);
+        else if(data < root.data)
+            root.left=removeNode(root.left,data);
+        else{  //data equal
+            if(root.left==null || root.right==null) //handles single child and leaf node cases.
+                return root.left!=null ? root.left :root.right;
+            int maxData=maximum(root.left); //two childs
+            root.data=maxData;
+            root.left=removeNode(root.left,maxData);
+        }            
+        return root;
+    }
+    public static void inOrder(Node root,ArrayList<Integer> ans){
+        if(root==null)
+            return;
+        inOrder(root.left,ans);
+        ans.add(root.data);
+        inOrder(root.right,ans);
+    }
+    public static void targetSumPair(Node root,int target){
+        ArrayList<Integer> ans=new ArrayList<>();
+        inOrder(root,ans);
+        int i=0,j=ans.size()-1;
+        while(i!=j){
+            int sum=ans.get(i)+ans.get(j);
+            if(sum>target)
+                j--;
+            else if(sum<target)
+                i++;
+            else{
+                System.out.println(ans.get(i)+" "+ans.get(j));
+                i++;
+                j--;
+            }        
+        }
     }
 }

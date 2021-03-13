@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 public class BinaryTree{
 	public static class Node{
 		int data=0;
@@ -158,5 +159,22 @@ public static boolean nodeToRootPath(Node root,int data,ArrayList<Node> ans){
 	root.left=removeLeaves(root.left);
 	root.right=removeLeaves(root.right);
 	return root;
+  }
+  public static Node Lca(Node root,int d1,int d2){ //Least common Ancestor
+	ArrayList<Node> list1=new ArrayList<>();
+	ArrayList<Node> list2=new ArrayList<>();
+	nodeToRootPath(root,d1,list1); //we have chosen nodetoroot path way in Binary search beacuse values are present anywhere but in BST values are pesent in an order so we compare them and then find Lca.
+	nodeToRootPath(root,d2,list2);	
+	int i=list1.size()-1;
+	int j=list2.size()-1;
+	Node lca=null;
+	while(i>=0 && j>=0){
+		if(list1.get(i)!=list2.get(j))
+			break;
+		lca=list1.get(i);
+		i--;
+		j--;
+	}
+	return lca;
   } 
 }
