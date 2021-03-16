@@ -160,21 +160,152 @@ public static boolean nodeToRootPath(Node root,int data,ArrayList<Node> ans){
 	root.right=removeLeaves(root.right);
 	return root;
   }
-  public static Node Lca(Node root,int d1,int d2){ //Least common Ancestor
-	ArrayList<Node> list1=new ArrayList<>();
-	ArrayList<Node> list2=new ArrayList<>();
-	nodeToRootPath(root,d1,list1); //we have chosen nodetoroot path way in Binary search beacuse values are present anywhere but in BST values are pesent in an order so we compare them and then find Lca.
-	nodeToRootPath(root,d2,list2);	
-	int i=list1.size()-1;
-	int j=list2.size()-1;
-	Node lca=null;
-	while(i>=0 && j>=0){
-		if(list1.get(i)!=list2.get(j))
-			break;
-		lca=list1.get(i);
-		i--;
-		j--;
-	}
-	return lca;
+  //without return type 
+  public static void removeLeaves(Node root,Node par){
+	  if(root==null){
+		  return null;
+	  }
+	  if(root.left==null && root.right==null){ //leaf node
+		if(par.left==node)
+			par.left=null;
+		else
+			par.right=null;
+		return;		
+	  }
+	  removeLeaves(root.left,root);
+	  removeLeaves(root.right,root);
+  }
+  public static Node removeLeaves(Node root){
+	  if(root.left==null && root.right==null)
+	  	return null;
+	  removeLeaves(root,null);
+	  return root;
   } 
+  //=======================================================================
+  public static Node prev=null;
+  public static boolean isBst(Node root){ //inorder traverse and check prev data chota hona chahiye cuurnet root ke data se.
+	  if(root==null){
+		  return true;
+	  }
+	  boolean leftRes=isBst(root.left);
+	  if(!leftRes) return false;
+	  if(prev!=null && prev.data > root.data) return false; 
+	  prev=root;
+	  boolean rightRes=isBst(root.right);
+	  if(!rightRes)	return false;
+	  return true;
+  }
+  public static class isBStSolPair{
+	  int maxEle=-(int)1e8;
+	  int minEle=(int)1e8;
+	  boolean isBst=true;
+  }
+	  public static isBStSolPair isBst_(Node root){
+		  if(root==null){ //khali node bhi bst hota hai.
+			//   isBStSolPair base=new isBStSolPair();
+			//   base.isBst=true; but by default true hai members mein.
+			//   return base;
+			return new isBStSolPair(); //one line
+		  }  
+
+		  isBStSolPair left=isBst_(root.left);
+		  isBStSolPair right=isBst_(root.right);
+		  isBStSolPair myres=new isBStSolPair();
+		  myres.isBst=false; 
+		  if(left.isBst && right.isBst && left.maxEle < root.data && root.data < right.minEle){
+			myres.isBst=true;
+			myres.minEle=Math.min(root.data,left.minEle);
+			myres.maxEle=Math.max(root.data,right.maxEle);
+		  }
+		  return myres;
+ 	 }
+
+
+	 public static class isBalPair{
+		int height=-1; //in terms of edges.
+		boolean balancefactor=true;
+	 }  
+	 public static isBalPair isBal_(Node root){
+		if(root==null){
+			return new isBalPair();
+		}
+		isBalPair leftRes=isBal_(root.left);
+		if(!leftRes.balancefactor) return leftRes;
+		isBalPair rightRes=isBal_(root.right);
+		if(!rightRes.balancefactor) return rightRes;
+		isBalPair myres=new isBalPair();
+		myres.balancefactor=false;
+		if(leftRes.balancefactor && rightRes.balancefactor && Math.abs(leftRes.height-rightRes.height)<=1){
+			myres.balancefactor=true;
+			myres.height=Math.max(leftRes.height,rightRes.height)+1;
+		}
+		return myres;
+	 }
+	 public static boolean isBal(Node root){
+		 isBalPair ans=isBal_(root);
+		 return ans.balancefactor;
+	 }
+	 //==============================================================================================
+	 //(In O(n) time only we find all information togther like isBst,height,largestBst,largestBstSize,totalnoBst  by combining all members in a class.)
+	 public static class isBalPairAllSoln{
+		 int maxEle=-(int)1e8;
+		 int minEle=(int)1e8;
+		 boolean isBst=true;
+		 
+		 int height=-1;
+		 boolean isBal=true;
+
+		 int totalnoBst=0;
+		 Node largestBst=null;
+		 int largestBstSize=0;
+	 }
+	 public static isBalPairAllSoln allSoln(Node root){
+		 if(root==null){
+			 return new isBalPairAllSoln();
+		 }
+		 isBalPairAllSoln left=allSoln(root.left);
+		 isBalPairAllSoln right=allSoln(root.right);
+		 isBalPairAllSoln myans=new isBalPairAllSoln();
+		 myans.isBst=left.isBst && right.isBst && left.maxEle < root.data && root.data <right.minEle;
+		 myans.isBal=left.isBst && right.isBst && Math.abs(left.height-right.height)<=1;
+		
+		 myans.maxEle=Math.max(root.data,right.maxEle);
+		 myans.minEle=Math.min(root.data,left.minEle);
+		 myans.height=left.height+right.height +1;
+
+		 myans.totalnoBst=left.totalnoBst+right.totalnoBst +(myans.isBst ? 1:0);
+		 if(myans.isBst){
+			 myans.largestBst=root;
+			 myans.largestBstSize=left.largestBstSize+right.largestBstSize+1;
+		 }
+		 else{
+			 if(left.largestBstSize > right.largestBstSize){
+				 myans.largestBst=left.largestBst;
+				 myans.largestBstSize=left.largestBstSize;
+			 }
+			 else{
+				myans.largestBst=right.largestBst;
+				myans.largestBstSize=right.largestBstSize;
+			 }
+		 }
+		 return myans;
+	}
+	
+	public static Node Lca(Node root,int d1,int d2){ //Least common Ancestor
+		ArrayList<Node> list1=new ArrayList<>();
+		ArrayList<Node> list2=new ArrayList<>();
+		nodeToRootPath(root,d1,list1); //we have chosen nodetoroot path way in Binary search beacuse values are present anywhere but in BST values are pesent in an order so we compare them and then find Lca.
+		nodeToRootPath(root,d2,list2);	
+		int i=list1.size()-1;
+		int j=list2.size()-1;
+		Node lca=null;
+		while(i>=0 && j>=0){
+			if(list1.get(i)!=list2.get(j))
+				break;
+			lca=list1.get(i);
+			i--;
+			j--;
+		}
+		return lca;
+	  }
 }

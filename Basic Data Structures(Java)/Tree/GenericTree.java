@@ -89,4 +89,24 @@ public class GenericTree{
         int dis=list1.size()+list2.size()-2*(lcaDist) +1-1;//count dist. in terms of edges
         return dis;
     }
+
+
+    static int main_data=(int)1e8; //Using static 
+    public static int kthLargest(Node root,int k){
+        while(k-->0){
+           main_data=maximum(root,main_data);
+        }
+        return main_data;
+    }
+    public static int maximum(Node root,int data){
+        int maxValue=-(int)1e8;
+        for(Node child:root.children){
+            if(Math.max(maxValue,maximum(child,data)) < data)
+                maxValue=Math.max(maxValue,maximum(child,data));
+        }
+        if(maxValue>root.data)
+            return maxValue;
+        else
+            return root.data;    
+    }
 } 
