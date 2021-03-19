@@ -109,4 +109,123 @@ public class GenericTree{
         else
             return root.data;    
     }
+//============================================================================================
+   
+    public static Node getTail(Node node){
+        Node curr=node;
+        while(curr.childs.size()!=0){
+            curr=curr.childs.get(0);
+        }
+        return curr;
+    }
+    public static void linearize(Node node){
+        for(Node child :node.childs){
+            linearize(child);
+        }
+        for(int i=node.childs.size()-2; i>=0 ; i--){
+            Node tail=getTail(node.childs.get(i));
+            tail.childs.add(node.childs.get(i+1));
+            node.childs.remove(i+1);
+        }      
+    }
+    public static Node linearize_btr(Node node){
+        if(node.childs.size()==0)
+            return node;
+        int n=node.childs.size();    
+        Node gtail=linearize_btr(node.childs.get(n-1));
+        for(int i=n-2; i>=0 ;i--){
+            Node tail=linearize_btr(node.childs.get(i));
+            tail.childs.add(node.childs.get(i+1));
+            node.childs.remove(i+1);
+        }
+        return gtail; //har child apna tail return kr rhe hai.
+    }
+
+    static int ceil;
+    static int floor;
+    public static void ceilAndFloor(Node node, int data){
+    if(node.data > data)
+        ceil=Math.min(ceil,node.data);
+    else if(node.data < data)
+        floor=Math.max(floor,node.data);
+    for(Node child:node.children){
+        ceilAndFloor(child,data);
+    }
+}
+    public static int kLargest_(Node node,int bound){
+        int maxLessThanBound=-(int)1e9;
+        for(Node child:node.childs){
+            int recAns=kLargest_(child,bound);
+            maxLessThanBound=Math.max(maxLessThanBound,recAns);
+        }
+        if(node.data < bound){
+            maxLessThanBound=Math.max(node.data,maxLessThanBound);
+        }
+        return maxLessThanBound;
+    }
+    
+    public static int kLargest(Node node,int k){
+        int bound=(int)1e9;
+        while(k-->0){
+            bound=kLargest_(node,bound);
+        }
+        return bound;
+    }
+
+    public static boolean areSimilarShape(Node t1,Node t2){
+        if(t1.childs.size()!=t2.childs.size())
+            return false;
+        int n=t1.childs.size();    
+        for(int i=0;i<n;i++){ //Childs ko check krne ke liye loop hai.
+            Node child1=t1.childs.get(i);
+            Node child2=t2.childs.get(i);
+            if(!areSimilarShape(child1,child2))
+                return false;
+        }
+        return true;    
+    }
+    public static boolean areSimilarMirror(Node t1,Node t2){
+        if(t1.childs.size()!=t2.childs.size())
+            return false;
+        int n=t1.childs.size();
+        for(int i=0,j=n-1;i<n;i++,j--){
+            Node child1=t1.childs.get(i);
+            Node child2=t2.childs.get(j);
+            if(!areSimilarMirror(child1,child2))
+                return false;
+        }
+        return true;    
+    }
+    public static boolean isSymmetric(Node t1,Node t2){
+        if(t1.childs.size()!=t2.childs.size())
+            return false;
+        int n=t1.childs.size();
+        for(int i=0,j=n-1;i<n;i++,j--){
+            Node child1=t1.childs.get(i);
+            Node child2=t2.childs.get(j);
+            if(!isSymmetric(child1,child2))
+                return false;
+        }
+        return true;    
+    }
+    public static boolean isSymmetric(Node node){
+        return isSymmetric(node,node);
+    }
+
+    public static Node removeLeaves_(Node node) {
+        if(node.childs.size()==0){
+            return null;
+        }
+        ArrayList<Node> rec=new ArrayList<Node>();
+        for(Node child:node.childs){
+            Node ans=removeLeaves_(child);
+            if(ans!=null)
+                rec.add(ans);
+        }
+        node.childs=rec;
+        return node; 
+    }
+    public static void removeLeaves(Node node){
+        removeLeaves_(node);
+    }
 } 
