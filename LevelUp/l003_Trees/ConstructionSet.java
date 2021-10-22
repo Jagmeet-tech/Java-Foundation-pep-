@@ -129,4 +129,74 @@ public class ConstructionSet{
 
         return root;
     }
+
+
+    //889
+    public TreeNode constructFromPrePost(int[] pre,int psi,int pei,int[] post,int ppsi,int ppei) {
+        if(psi > pei)
+            return null;
+        
+        TreeNode root = new TreeNode(pre[psi]);
+        if(psi == pei)  //case when array contain 1 element.
+            return root;
+        int idx = ppsi;
+    
+        while(post[idx] != pre[psi+1])
+            idx++;
+         
+        int tnel = idx - ppsi + 1; // [a,b] = b-a+1
+        
+        root.left = constructFromPrePost(pre,psi + 1,psi + tnel,post,ppsi,idx);
+        root.right = constructFromPrePost(pre,psi + tnel + 1,pei,post,idx + 1,ppei - 1);
+
+        return root;
+    }
+    public TreeNode constructFromPrePost(int[] pre, int[] post) {
+        return constructFromPrePost(pre,0,pre.length-1,post,0,post.length-1);
+    }
+
+     // HM_:https://practice.geeksforgeeks.org/problems/construct-tree-from-inorder-and-levelorder/1
+
+    // https://www.geeksforgeeks.org/check-if-given-preorder-inorder-and-postorder-traversals-are-of-same-tree/
+
+    //297
+    public void serialize_preorder(TreeNode root,StringBuilder sb) {
+        if(root == null){
+            sb.append("# ");
+            return;
+        }
+
+        sb.append(root.val+" ");
+        serialize_preorder(root.left,sb);
+        serialize_preorder(root.right,sb);
+    }
+
+    public String serialize_preorder(TreeNode root) {
+        StringBuilder sb = new StringBuilder();
+        serialize_preorder(root,sb);
+        return sb.toString();
+    }
+
+    public TreeNode deserialize_preorder(String []arr, int[] idx) {
+        if(idx[0] >= arr.length || arr[idx[0]].equals("#")){
+            idx[0]++;
+            return null;
+        }
+
+        int i = idx[0]++;
+        int val = Integer.parseInt(arr[i]);
+
+        TreeNode root = new TreeNode(val);
+        root.left = deserialize_preorder(arr,idx);
+        root.right = deserialize_preorder(arr,idx);
+        
+        return root;
+    }
+
+    public TreeNode deserialize_preorder(String data) {
+        String []arr = data.split(" ");
+        int []idx = new int[1];
+        
+        return deserialize_preorder(arr,idx);
+    }
 }

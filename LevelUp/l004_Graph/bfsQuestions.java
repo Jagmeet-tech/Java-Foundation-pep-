@@ -1,3 +1,8 @@
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class bfsQuestions{
 
     int[][] dir = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
@@ -206,5 +211,141 @@ public class bfsQuestions{
         }   
         return level; 
         
+    }
+
+    //815
+    public int numBusesToDestination(int[][] routes, int source, int target) {
+        int n = routes.length, interchange = 0;
+        if(source == target)
+            return 0;
+            
+        HashMap<Integer,ArrayList<Integer>> map = new HashMap<>();  //busStand to buses mapping
+        for(int bus = 0;bus < n;bus++){
+            for(int busStand : routes[bus]){
+                map.putIfAbsent(busStand, new ArrayList<>());
+                map.get(busStand).add(bus);
+            }
+        }
+
+        HashSet<Integer> busStandVisted = new HashSet<>();
+        boolean []busVisited = new boolean[n];
+
+        LinkedList<Integer> que = new LinkedList<>();
+        que.add(source);
+        busStandVisted.add(source);
+        while(que.size()!=0){           //BFS without cycle
+            int size = que.size();
+            while(size-- > 0){
+                int busStand = que.removeFirst();
+                for(int bus : map.get(busStand)){
+                    if(busVisited[bus])
+                        continue;       //que mein uske station mat daalo
+                    else{
+                        for(int upcomingBusStand : routes[bus]){
+                            if(!busStandVisted.contains(upcomingBusStand)){
+                                que.addLast(upcomingBusStand);
+                                busStandVisted.add(upcomingBusStand);
+
+                                if(upcomingBusStand == target)
+                                    return interchange + 1;
+                            }
+                        }
+                    }
+
+                    busVisited[bus] = true;
+                }
+            }
+            interchange++;
+        }
+        return -1;  
+    } 
+    
+    //490 / 787
+    public boolean hasPath(int[][] maze, int[] start, int[] destination) {
+        int n = maze.length , m = maze[0].length , sr = start[0], sc = start[1], er = destination[0], ec = destination[1];
+        LinkedList<Integer> que = new LinkedList<>();
+        boolean [][] vis = new boolean[n][m];
+        int [][]dirs = {{0,1},{0,-1},{1,0},{-1,0}}; 
+        que.addLast(sr *m + sc);
+        vis[sr][sc] = true;
+
+        int len = Math.max(n,m);
+        while(que.size() != 0){
+            int size = que.size();
+            while(size-- >0){
+                int idx = que.removeFirst() , i = idx/m, j = idx % m;
+                for(int d[] : dirs){
+                    int r = i,c = j;
+                    while(r>=0 && c>=0 && r<n && c<m && maze[r][c] == 0){
+                        r += d[0];
+                        c += d[1];
+                    }
+                    r -= d[0];
+                    c -= d[1]; 
+
+                    if(vis[r][c])
+                        continue;
+                    que.addLast(r*m + c);
+                    vis[r][c] = true;
+                    
+                    if(r == er && c == ec)
+                        return true;        
+                }
+            }
+        }
+        return false;
+    }
+
+    //505 / 788
+    public int shortestDistance(int[][] maze, int[] start, int[] destination) {
+        int n = maze.length , m = maze[0].length , sr = start[0], sc = start[1], er = destination[0], ec = destination[1];
+        class pair implements Comparable<pair>{
+            int r ,c,dist;
+
+            pair(int r,int c,int dist){
+                this.r = r;
+                this.c = c;
+                this.dist = dist;
+            }
+
+            public int compareTo(pair o){
+                return this.dist - o.dist;
+            }
+        }
+
+        PriorityQueue<pair> pq = new PriorityQueue<>();
+        int [][]dist = new int[n][m];
+        int [][]dirs = {{0,1},{0,-1},{1,0},{-1,0}};  
+        for(int d[] : dist)
+            Arrays.fill(d,(int)1e8);
+
+        pair root = new pair(sr,sc,0);    
+        pq.add(root);
+        dist[sr][sc] = 0;
+
+        while(pq.size()!=0){
+            int size = pq.size();
+            while(size-- > 0){
+                pair p = pq.remove();
+                for(int []d : dirs){
+                    int r = p.r, c = p.c , l = p.dist;
+                    while(r>=0 && c>=0 && r<n && c<m && maze[r][c] == 0){
+                        r += d[0];
+                        c += d[1];
+                        l++;
+                    }
+
+                    r -= d[0];
+                    c -= d[1];
+                    l--;
+
+                    if(l >= dist[r][c]) 
+                        continue;
+                    pq.add(new pair(r,c,l));
+                    dist[r][c] = l;   
+                }
+            } 
+        }
+        return distance[er][ec] != (int) 1e8 ? distance[er][ec] : -1;
     }
 }

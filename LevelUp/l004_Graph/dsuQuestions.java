@@ -199,4 +199,119 @@ public class dsuQuestions{
         }
         return ans;
       }
+
+          public int regionsBySlashes(String[] grid) {
+        int n = grid.length,m = n+1 , region = 1;
+        par = new int[m * m];
+        for(int i = 0;i < m*m;i++){
+            par[i] = i;
+            int r = i/m ,c =i % m;
+            if(r == 0 || c == 0 || r == m-1 || c == m-1)
+                par[i] = 0; //0 means in same group.
+        }
+        
+        for(int i =0;i<n;i++){
+            String s = grid[i];
+            for(int j=0;j<s.length();j++){
+                char ch = s.charAt(j);
+                int p1 =0, p2=0;
+                if(ch == '/'){
+                    p1 = findParent(i*m + j + 1);
+                    p2 = findParent((i+1)*m + j);
+                }else if(ch == '\\'){
+                    p1 = findParent(i*m + j);
+                    p2 = findParent((i+1)*m + j + 1);
+                }else   //for space
+                    continue;
+                
+                if(p1 != p2)
+                    par[p1] = p2;
+                else
+                    region++;
+            }
+        }
+        return region;
+    }
+
+    //959
+    public int regionsBySlashes(String[] grid) {
+        int n = grid.length,m = n+1 , region = 1;
+        par = new int[m * m];
+        for(int i = 0;i < m*m;i++){
+            par[i] = i;
+            int r = i/m ,c =i % m;
+            if(r == 0 || c == 0 || r == m-1 || c == m-1)
+                par[i] = 0; //0 means in same group.
+        }
+        
+        for(int i =0;i<n;i++){
+            String s = grid[i];
+            for(int j=0;j<s.length();j++){
+                char ch = s.charAt(j);
+                int p1 =0, p2=0;
+                if(ch == '/'){
+                    p1 = findParent(i*m + j + 1);
+                    p2 = findParent((i+1)*m + j);
+                }else if(ch == '\\'){
+                    p1 = findParent(i*m + j);
+                    p2 = findParent((i+1)*m + j + 1);
+                }else   //for space
+                    continue;
+                
+                if(p1 != p2)
+                    par[p1] = p2;
+                else
+                    region++;
+            }
+        }
+        return region;
+    }
+
+    // 685. Redundant Connection II
+
+    //924
+    public int minMalwareSpread(int[][] graph, int[] initial) {
+        int n = graph.length;
+        par = new int[n];
+        int []poc = new int[n];     //population of country
+        for(int i =0;i<n;i++){
+            par[i] = i;
+            poc[i] = 1;
+        }
+
+        for(int i=0;i<n;i++){
+            int p1 = findParent(i);
+            for(int j =0;j<n;j++){
+                if(i!=j){
+                    if(graph[i][j] == 1){
+                        int p2 = findParent(j);
+                        if(p1 != p2){
+                            par[p2] = p1;
+                            poc[p1] += poc[p2];
+                        }
+                    }
+                }
+            }
+        }
+
+        Arrays.sort(initial);
+        int []ipc = new int[n];     //infected person in a country
+        for(int ip : initial){
+            int c = findParent(ip);
+            ipc[c]++;
+        }
+
+        int maxPopulated = 0;
+        int c = initial[0];
+        for(int ip : initial){
+            int p = findParent(ip);
+            if(ipc[p] == 1 && poc[p] > maxPopulated){
+                maxPopulated = poc[p];
+                c = ip;
+            }
+        }
+        return c;
+    }
+    
 }
+
