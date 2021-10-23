@@ -370,4 +370,37 @@ public class questions{
         return count;
     }
 
+    //139
+    public static int wordBreak(String s,int idx,String ans,HashSet<String> dict,int maxlen,int []dp){
+        if(idx >= s.length()){
+            return dp[idx] = 1;
+        }
+        
+        if(dp[idx]!=-1)
+            return dp[idx];
+        boolean res = false;
+        for(int i = idx;i<=s.length();i++){
+            String word = s.substring(idx,i);
+            if(word.length() > maxlen)
+                break;
+            if(dict.contains(word))
+                 res = res || wordBreak(s,i,ans + word + " ",dict,maxlen,dp) == 1 ? true:false ;    
+        }
+        return dp[idx] =  res ? 1 : 0;
+    }
+    
+    public boolean wordBreak(String str, List<String> wordDict) {
+        HashSet<String> dict = new HashSet<>();
+        int maxlen=0;
+        int n = str.length();
+        int dp[] = new int[n+1];
+        Arrays.fill(dp,-1);
+        for(String s : wordDict){
+            dict.add(s);
+             maxlen = Math.max(maxlen,s.length());
+        }
+           
+        return wordBreak(str,0,"",dict,maxlen,dp) == 1?true:false; 
+    }
+
 }

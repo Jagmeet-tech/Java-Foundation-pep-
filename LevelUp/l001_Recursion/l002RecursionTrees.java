@@ -373,6 +373,54 @@ public class l002RecursionTrees{
         return count;
     }
 
+    //   O(n)^q  Highly optimized  Nqueen:-  in terms of no. of calls..............
+    public static int NqueenCombination_04(int floor,int tnq,int m,String ans){
+        if(tnq == 0){
+            System.out.println(ans);
+            return 1;
+        }
+        
+        int count = 0;
+        calls++;
+        for(int rooms =0;rooms<m;rooms++){
+            int r = floor, c = rooms;
+            if(!rows[r] && !cols[c] && !diag[r+c] && !Adiag[r-c + m-1]){
+                rows[r] = cols[c] = diag[r+c] = Adiag[r-c + m-1] = true;
+
+                count += NqueenCombination_04(floor + 1,tnq - 1,m,ans + "(" + r + ", " + c + ") ");
+                
+                rows[r] = cols[c] = diag[r+c] = Adiag[r-c + m-1] = false;
+            }  
+        }
+        return count;
+    }
+
+    public static int NqueenPermutation_04(int floor,int tnq,int m,String ans){
+        if(tnq == 0 || floor >= m){
+            if(tnq == 0){
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+        
+        int count = 0;
+        calls++;
+        for(int rooms = 0;rooms<m;rooms++){
+            int r = floor , c = rooms;
+            if(!rows[r] && !cols[c] && !diag[r+c] && !Adiag[r-c + m-1]){
+                rows[r] = cols[c] = diag[r+c] = Adiag[r-c + m-1] = true;
+
+                count += NqueenPermutation_04(0,tnq - 1,m,ans + "(" + r + ", " + c + ") ");
+                
+                rows[r] = cols[c] = diag[r+c] = Adiag[r-c + m-1] = false;
+            }
+        }
+        count += NqueenPermutation_04(floor + 1,tnq,m,ans);
+        return count;
+    }
+
+
     public static void main(String []args){
         int arr[]={2,3,5,7};
         int n=4,m=4;
@@ -399,7 +447,9 @@ public class l002RecursionTrees{
         // System.out.println(nqueenPermutation_01(boxes,4,0,""));
         // System.out.println(nqueenCombinationSubseq_02(boxes,4,0,""));
         // System.out.println(nqueenCombination_03(4,0,n,m,""));
-        System.out.println(nqueenPermutation_03(4,0,n,m,""));
+        // System.out.println(nqueenPermutation_03(4,0,n,m,""));
+        // System.out.println(NqueenCombination_04(0,4,m,""));
+        System.out.println(NqueenPermutation_04(0,4,m,""));
         System.out.println(calls);
 
     }
