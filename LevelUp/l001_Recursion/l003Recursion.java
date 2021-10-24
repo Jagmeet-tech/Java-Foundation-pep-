@@ -74,12 +74,6 @@ public class l003Recursion{
         crypto(str,0);
     }
 
-
-    public static void main(String []args){
-        crypto();
-    }
-
-
     public static int wordBreak(String s,int idx,String ans,HashSet<String> dict,int maxlen){
         if(idx >= s.length()){
             System.out.println(ans);
@@ -104,21 +98,17 @@ public class l003Recursion{
         wordBreak(s,0,ans,dict,maxlen);    
     }
 
+    //sudoku --------------------------------------------------------------------------------- 
+    public static void displayBoard(char board[][]){
+        int n = board.length, m =board[0].length;
+        for(int i =0;i<n;i++){
+            for(int j=0;j<m;j++){
+                System.out.print(board[i][j] +" ");
+            }
+            System.out.println();
+        }
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    //sudoku ---------------------------------- 
-    
     public static boolean isSafeToPlaceNum(char [][]board ,int row,int col,int num){
         int n=board.length,m=board[0].length;
         //row
@@ -145,6 +135,7 @@ public class l003Recursion{
     
     public boolean solveSudoku(char[][] board,int idx){
         if(idx == 81){
+            // displayBoard(board);
             return true;
         }
 
@@ -167,34 +158,37 @@ public class l003Recursion{
         return false;
     }
     
-//sudoku optimize in terms of code(storing that indexes that are empty where we can place value. )----------------   
+    //sudoku optimize in terms of code(storing that indexes that are empty where we can place value. )----------------   
 
-public boolean sudokuSolver(char [][]board,int idx,ArrayList<Integer> IDX){
-    if(idx == IDX.size()){
-        return true;
-    }
-    int r=IDX.get(idx) / 9;
-    int c=IDX.get(idx) % 9;
-    for(int num=1;num<=9;num++){
-        if(isSafeToPlaceNum(board,r,c,num)){
-            board[r][c]=(char)(num+'0');
-            if(sudokuSolver(board,idx+1,IDX))
-                return true;
-            board[r][c]='.';    
+    public boolean sudokuSolver(char [][]board,int idx,ArrayList<Integer> IDX){
+        if(idx == IDX.size()){
+            return true;
         }
-    }
-    return false;
-}
-public void sudokuSolver(char [][]board){
-    ArrayList<Integer> IDX=new ArrayList<>(); //containing  index of empty block.
-    for(int i=0;i<9;i++){
-        for(int j=0;j<9;j++){
-            if(board[i][j] =='.')
-                IDX.add( i* 9 + j);      //row*9 +col  (1d)
+        int r=IDX.get(idx) / 9;
+        int c=IDX.get(idx) % 9;
+        for(int num=1;num<=9;num++){
+            if(isSafeToPlaceNum(board,r,c,num)){
+                board[r][c]=(char)(num+'0');
+                if(sudokuSolver(board,idx+1,IDX))
+                    return true;
+                board[r][c]='.';    
+            }
         }
+        return false;
     }
-    sudokuSolver(board,0,IDX);
-}
+    public void sudokuSolver(char [][]board){
+        ArrayList<Integer> IDX=new ArrayList<>(); //containing  index of empty block.
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(board[i][j] =='.')
+                    IDX.add( i* 9 + j);      //row*9 +col  (1d)
+            }
+        }
+        sudokuSolver(board,0,IDX);
+    }
     
-
+    
+    public static void main(String []args){
+        crypto();
+    }
 }

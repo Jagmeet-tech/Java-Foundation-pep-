@@ -403,4 +403,97 @@ public class questions{
         return wordBreak(str,0,"",dict,maxlen,dp) == 1?true:false; 
     }
 
+    //698
+    public static boolean kEqualSumSubset(int arr[],int []totalSetSum,int idx,ArrayList<ArrayList<Integer>> ans,String res){
+        if(idx == arr.length){
+            for(int ele: totalSetSum){
+                if(ele != 0)
+                    return false;
+            }
+            // System.out.println(ans);
+            return true;
+        }
+
+
+        int count = 0;
+        boolean flag =false;
+        for(int i=0;i<totalSetSum.length;i++){
+            if( totalSetSum[i] < arr[idx])
+                continue;
+            
+            boolean isFirstTime = false;    // used to find leader of set so that permutations cant happen.
+            if(ans.get(i).size() == 0)
+                isFirstTime = true;
+
+            totalSetSum[i] -= arr[idx];
+            ans.get(i).add(arr[idx]);
+            flag = flag || kEqualSumSubset(arr,totalSetSum,idx+1,ans,res + arr[idx]+" ");
+            
+            totalSetSum[i] += arr[idx];
+            ans.get(i).remove(ans.get(i).size() - 1);
+
+            if(isFirstTime)
+                break;
+            
+        }
+
+        return flag;
+    }
+
+    public static boolean kEqualSumSubset(int arr[],int k){
+        int sum = 0;
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        for(int ele : arr)
+            sum += ele;
+
+        if(sum % k != 0 || arr.length < k)
+            return false;    
+        
+        for (int i = 0; i < k; i++)
+            ans.add(new ArrayList<>());    
+        
+        int tar = sum / k;
+        int totalSetSum[] = new int[k];
+        Arrays.fill(totalSetSum,tar);
+        return kEqualSumSubset(arr,totalSetSum,0,ans,"");
+     }
+
+    public boolean canPartitionKSubsets(int[] nums, int k) {
+        return kEqualSumSubset(nums,k);
+    }
+
+    //131
+    public static boolean isPalindrome(String str){
+        int si = 0, ei = str.length()-1;
+        while(si <= ei){
+            if(str.charAt(si++) != str.charAt(ei--))
+                return false;
+        } 
+        return true;
+    }
+
+    public static void allPalindromicPartitions(String str, String asf,List<List<String>> bigans,List<String>smallans){
+        if(str.length() == 0){
+            // System.out.println(asf);
+            List<String> base = new ArrayList<>(smallans);
+            bigans.add(base);
+            return ;
+        }
+        
+        for(int i=0;i<str.length();i++){
+            String ans = str.substring(0,i+1);
+            if(isPalindrome(ans)){
+                smallans.add(ans);
+                allPalindromicPartitions(str.substring(i+1),asf + "(" + ans + ") ",bigans,smallans);
+                smallans.remove(smallans.size()-1);
+            }
+        }
+    }
+    
+    public List<List<String>> partition(String s) {
+        List<List<String>> bigans = new ArrayList<>();
+        allPalindromicPartitions(s,"",bigans,new ArrayList<>());
+        return bigans;
+    }
+
 }
